@@ -1,6 +1,5 @@
 name: FastAPI CI Pipeline
 
-# Указываем, при каких событиях запускается робот
 on:
   push:
     branches: [ "main", "master" ]
@@ -11,27 +10,26 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Шаги, которые выполняет виртуальная машина GitHub
     steps:
-      # 1. Скачиваем исходный код репозитория
+      # 1. Скачиваем исходный код
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Устанавливаем Python нужной версии
+      # 2. Настраиваем Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip' # кэшируем зависимости для скорости
+          cache: 'pip'
 
-      # 3. Устанавливаем зависимости проекта
+      # 3. Устанавливаем зависимости
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Проверяем, что проект запускается / прогоняем тесты (если они есть)
-      - name: Run lint or basic check
+      # 4. Собираем Docker-образ для проверки работоспособности Dockerfile
+      - name: Build Docker image
         run: |
-          echo "Dependencies installed successfully. Project is ready!"
-          # Здесь в будущем можно добавить pytest или flake8
+          docker build -t backend-service:latest .
+          
